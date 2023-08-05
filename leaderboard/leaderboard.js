@@ -58,9 +58,9 @@ const calculateScore = (accuracy1, accuracy2, accuracy3) => {
   return score1 + score2 + score3;
 };
 const parseData = (data, timing) => {
-  const accuracy1 = data.answers["1"].accuracy;
-  const accuracy2 = data.answers["2"].accuracy;
-  const accuracy3 = data.answers["3"].accuracy;
+  const accuracy1 = data.answers["1"] ? data.answers["1"]?.accuracy : "---";
+  const accuracy2 = data.answers["2"] ? data.answers["2"]?.accuracy : "---";
+  const accuracy3 = data.answers["3"] ? data.answers["3"]?.accuracy : "---";
   return {
     "Team Name": data.teamName,
     Easy: accuracy1,

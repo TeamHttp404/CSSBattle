@@ -38,9 +38,9 @@ const fetchData = async () => {
 };
 const parseData = (data) => {
   return {
-    Easy: data.answers["1"].accuracy,
-    Medium: data.answers["2"].accuracy,
-    Hard: data.answers["3"].accuracy,
+    Easy: data.answers["1"] !== undefined ? data.answers["1"]?.accuracy : "---",
+    Medium: data.answers["2"] !== undefined ? data.answers["2"]?.accuracy : "---",
+    Hard: data.answers["3"] !== undefined ? data.answers["3"]?.accuracy : "---",
     "Security Key": data.securityKey,
     "Logged Out Count": data.loggedOutCount,
   };
