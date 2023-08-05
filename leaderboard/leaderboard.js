@@ -19,7 +19,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
-let allUsersData;
+let allUsersData, timingData;
+
 const fetchData = async () => {
   const dbRef = ref(getDatabase());
   await get(child(dbRef, `battle/`))
@@ -35,6 +36,20 @@ const fetchData = async () => {
     .catch((error) => {
       console.error(error);
     });
+  await get(child(dbRef, `timing/`))
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        timingData = data;
+        console.log(data);
+      } else {
+        allUsersData = {};
+        console.log("No data available");
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 };
 const calculateScore = (accuracy1, accuracy2, accuracy3) => {
   let score1 = accuracy1 === "---" ? 0 : +accuracy1.split("%")[0];
@@ -42,7 +57,7 @@ const calculateScore = (accuracy1, accuracy2, accuracy3) => {
   let score3 = accuracy3 === "---" ? 0 : +accuracy3.split("%")[0];
   return score1 + score2 + score3;
 };
-const parseData = (data) => {
+const parseData = (data, timing) => {
   const accuracy1 = data.answers["1"].accuracy;
   const accuracy2 = data.answers["2"].accuracy;
   const accuracy3 = data.answers["3"].accuracy;
@@ -51,6 +66,9 @@ const parseData = (data) => {
     Easy: accuracy1,
     Medium: accuracy2,
     Hard: accuracy3,
+    "Easy TOS": timing["1"] ? timing["1"].timeOfSubmission : "---",
+    "Medium TOS": timing["2"] ? timing["2"].timeOfSubmission : "---",
+    "Hard TOS": timing["3"] ? timing["3"].timeOfSubmission : "---",
     "Overall Score": calculateScore(accuracy1, accuracy2, accuracy3),
   };
 };
@@ -58,7 +76,7 @@ fetchData().then(() => {
   let users = Object.keys(allUsersData);
   const convertedUserData = {};
   users.forEach((user, index) => {
-    convertedUserData[user] = parseData(allUsersData[user]);
+    convertedUserData[user] = parseData(allUsersData[user], timingData[user]);
   });
   const columns = [
     "Position",
@@ -66,6 +84,9 @@ fetchData().then(() => {
     "Easy",
     "Medium",
     "Hard",
+    "Easy TOS",
+    "Medium TOS",
+    "Hard TOS",
     "Overall Score",
   ];
   const table = document.getElementById("alluserstable");

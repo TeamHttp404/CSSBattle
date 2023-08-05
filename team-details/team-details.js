@@ -20,8 +20,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 let allUsersData;
+const dbRef = ref(getDatabase());
 const fetchData = async () => {
-  const dbRef = ref(getDatabase());
   await get(child(dbRef, `battle/`))
     .then((snapshot) => {
       if (snapshot.exists()) {
