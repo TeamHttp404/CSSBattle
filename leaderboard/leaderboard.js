@@ -76,7 +76,10 @@ fetchData().then(() => {
   let users = Object.keys(allUsersData);
   const convertedUserData = {};
   users.forEach((user, index) => {
-    convertedUserData[user] = parseData(allUsersData[user], timingData[user]);
+    convertedUserData[user] = parseData(
+      allUsersData[user],
+      timingData[user] === undefined ? {} : timingData[user]
+    );
   });
   const columns = [
     "Position",
